@@ -37,6 +37,7 @@ local fetch_interval
 local services = {}
 local nacos_url
 local nacos_access_token
+local nacos_token_ttl = 18000
 
 local schema = {
     type = "object",
@@ -266,6 +267,7 @@ function _M.init_worker()
     log.info("fetch_interval:", fetch_interval, ".")
 
     ngx_timer_at(0, init_info)
+    ngx_timer_every(nacos_token_ttl, init_info)
     ngx_timer_every(fetch_interval, fetch_full_instances)
 end
 
