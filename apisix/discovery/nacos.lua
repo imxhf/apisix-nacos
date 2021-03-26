@@ -198,11 +198,14 @@ local function fetch_instances(service_name)
         log.error("service_name is invalid")
         return
     end
+    if not nacos_access_token then
+        init_info()
+    end
     local query = "accessToken=" .. nacos_access_token .. 
-	"&" .. "namespaceId=" .. namespaceId ..
-    "&" .. "groupName=" .. groupName ..
-	"&" .. "serviceName=" .. serviceName ..
-	"&" .. "healthyOnly=true"
+        "&" .. "namespaceId=" .. namespaceId ..
+        "&" .. "groupName=" .. groupName ..
+	    "&" .. "serviceName=" .. serviceName ..
+	    "&" .. "healthyOnly=true"
 
     local res, err = request(nacos_url, "GET", "ns/instance/list", query)
 
