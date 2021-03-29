@@ -21,9 +21,9 @@ title: Integration Nacos service discovery registry
 -->
 
 * [**Summary**](#Summary)
-* [**How to use Nacos in APISIX**](#How to use Nacos in APISIX)
+* [**How to use Nacos in APISIX**](#How-to-use-Nacos-in-APISIX)
     * [**Usage**](#Usage)
-    * [**Upstream setting**](#Upstream setting)
+    * [**Upstream setting**](#Upstream-setting)
 
 ## Summary
 
