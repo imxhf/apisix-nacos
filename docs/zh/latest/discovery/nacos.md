@@ -1,3 +1,6 @@
+---
+标题: 集成Nacos作为服务发现中心
+---
 <!--
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
@@ -17,8 +20,6 @@
 #
 -->
 
-# APISIX集成Nacos作为服务发现中心
-
 * [**摘要**](#摘要)
 * [**如何在APISIX中使用Nacos**](#如何在APISIX中使用Nacos)
     * [**接入**](#接入)
@@ -28,7 +29,7 @@
 
 常见的服务注册发现中心有：Eureka, Etcd, Consul, Zookeeper, Nacos等
 
-目前APISIX官方支持 Eureka 和基于 DNS 的服务注册发现，如 Consul 等，并实现了Eureka的接入代码。参看 [APISIX服务发现](https://github.com/apache/apisix/blob/master/docs/en/latest/discovery.md)
+目前APISIX官方支持 Eureka 和基于 DNS 的服务注册发现，如 Consul 等，并实现了Eureka的接入代码。参看 [APISIX服务发现](https://github.com/apache/apisix/blob/master/docs/zh/latest/discovery.md)
 
 本文描述了在APISIX中如何使用Nacos作为注册中心
 
@@ -36,17 +37,18 @@
 
 ### 接入
 
-首先，确保 `apisix/discovery/` 目录中包含 [`nacos.lua`](./apisix/discovery/nacos.lua);
+首先，确保 `apisix/discovery/` 目录中包含 `nacos.lua`；
 
-然后，在 `conf/config.yaml` 增加如下格式的配置，参看[`config.yaml`](./conf/config.yaml);
+然后，在 `conf/config.yaml` 增加如下格式的配置：
 
 ```yaml
 discovery:                     
   nacos:
-    host:                     
-      - "http://127.0.0.1:8848"
-    username: nacos_username
-    password: nacos_password
+    host:                     # Nacos集群中可能有多个host.
+      - "http://{nacos_host1}:${nacos_port1}"
+      - "http://{nacos_host2}:${nacos_port2}"
+    username: ${nacos_username}
+    password: ${nacos_password}
     prefix: "/nacos/v1/"
     fetch_interval: 5           
     weight: 100                 
@@ -56,9 +58,11 @@ discovery:
       read: 5000               
 ```
 
+username和password用来获取Nacos的access_token，它的ttl是18000s。
+
 ### upstream 配置
 
-APISIX是通过 `upstream.discovery_type`选择使用的服务发现， `upstream.service_name` 与注册中心的服务名进行关联。例如执行如下命令：
+这里是一个例子，路由请求"/ping"，到Nacos中注册的服务（该服务的Namespace是dev，group是DEFAULT_GROUP，服务名称是ping_demo)。
 
 ```shell
 $ curl http://127.0.0.1:9080/apisix/admin/routes/1 -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1' -X PUT -i -d '
